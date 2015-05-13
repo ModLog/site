@@ -1,0 +1,14 @@
+<h3>{{item.action}} by  <span>{{item.mod}}</span></h3>
+{{ago item.created_utc 'X'}}
+
+{{item.details}}
+{{item.description}}
+{{#if item.target_permalink}}
+  <h5>Target:
+    <a href='http://reddit.com{{unbound item.target_permalink}}' target='reddit'>{{item.target_permalink}}</a>
+  </h5>
+{{/if}}
+{{#if item.target_author}}
+  <h5>Author: {{item.target_author}}</h5>
+{{/if}}
+<hr>
