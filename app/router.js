@@ -7,4 +7,7 @@ var Router = Ember.Router.extend({
 
 export default Router.map(function() {
   this.route('log', {path: '/r/:subreddit'});
+  this.resource('scanner', {path: '/scan'}, function() {
+    this.resource('scan', {path: ':subreddit'});
+  });
 });

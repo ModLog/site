@@ -1,0 +1,13 @@
+<a class='btn btn-success pull-right' href='https://www.reddit.com/r/undelete/submit?title={{unbound item.title}}&url=www.reddit.com{{unbound item.permalink}}' target='reddit'>Submit</a>
+<h4>{{#if item.link_flair_text}}
+  <span class='label label-default'>[{{item.link_flair_text}}]</span>
+{{/if}}{{#if item.over_18}}
+  <span class='label label-danger'>NSFW</span>
+{{/if}}<a href='http://reddit.com/{{unbound item.permalink}}' target='reddit'>{{item.title}}</a></h4>
+<a href={{item.url}} target='_new'>{{item.url}}</a>
+<h5>
+{{item.num_comments}} comments
+posted {{ago item.created_utc 'X'}}
+by <span class='label label-info'>{{item.author}}</span>
+in <span class='label label-primary'>/r/{{item.subreddit}}</span>
+</h5>

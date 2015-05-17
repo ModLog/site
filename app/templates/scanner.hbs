@@ -1,0 +1,7 @@
+{{outlet}}
+{{#if model.length}}
+  <h3>{{model.length}} submissions detected [removed]</h3>
+  {{#each item in model}}<hr>
+    {{removed-link item=item}}
+  {{/each}}
+{{/if}}

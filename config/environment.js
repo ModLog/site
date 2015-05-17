@@ -16,9 +16,22 @@ module.exports = function(environment) {
     redditUser: 'publicmodlogs',
     redditFeed: 'c7b83b457469643f1912d5fee30e18dba808f351',
 
+    consumerKey: 'p93jnimz0njKow',
+    redirectUrl: 'http://localhost:4342/#/?',
+
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    },
+
+    contentSecurityPolicy: {
+      'default-src': "'none'",
+      'script-src': "'self'",
+      'font-src': "'self' http://maxcdn.bootstrapcdn.com https://maxcdn.bootstrapcdn.com http://fonts.gstatic.com https://fonts.gstatic.com",
+      'connect-src': "'self' https://*.reddit.com http://*.reddit.com",
+      'img-src': "'self' http://maxcdn.bootstrapcdn.com https://maxcdn.bootstrapcdn.com http://*.redditmedia.com data",
+      'style-src': "'self' 'unsafe-inline' http://maxcdn.bootstrapcdn.com https://maxcdn.bootstrapcdn.com http://fonts.googleapis.com https://fonts.googleapis.com",
+      'media-src': "'self'"
     }
   };
 
