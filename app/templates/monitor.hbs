@@ -1,49 +1,49 @@
 <div class='jumbotron'>
 {{#if snoocore.isLoggedIn}}
   <h1>
-    {{#if modlog.detected.length}}{{modlog.detected.length}}{{else}}?{{/if}}
-    [removed] |
-    {{modlog.reported.length}} reported
+    {{modlog.detected.length}}
+    [removed]
+    {{modlog.reported.length}} posted to /r/modlog
   </h1>
+  <p>ModLog is now scanning for removals and reporting them as posts to /r/modlog</p>
+  <p>Thank you for participating!</p>
 {{else}}
   <h2>What if you could make reddit more transparent?</h2>
-  <h3>without authority, effort or skill; simply the desire for change</h3>
+  {{!--<h3>without authority, effort or skill; simply the desire for change</h3>--}}
   <h2 class='well monitor-button'>
     <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-primary btn-lg'>
-      Allow posts
+      Allow bot to post
     </a>
     <span class='label label-default'>
-      {{#if modlog.detected.length}}{{modlog.detected.length}}{{else}}?{{/if}}
+      found {{modlog.detected.length}}
       [removed]
     </span>
   </h2>
   <div class='row'>
     <div class='col-md-6'>
       <p>
-        You Can! All it takes is a push of a button
+        <strong>You Can!</strong> All it takes is the <strong>push of a button</strong>
       </p><p>
         (and clicking
         <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-danger'>Allow</a>
-        on the next page)
+        on the <strong>next page</strong>)
+      </p><p>
+        This runs the bot for up to <strong>an hour</strong> in this tab
       </p>
-      <p>Some karma is necessary to avoid captchas</p>
-      <p>Dedicated bot accounts are recommended</p>
     </div><div class='col-md-6'>
       <p>
-        ModLog is a removal detection bot for the web
+        ModLog is a removal detection bot <strong>in your browser</strong>
       </p><p>
-        It's already finding [removed] stuff with your browser
+        <strong>You are already running it</strong> There's no install
       </p><p>
-        But it needs permission to post reports to reddit
-      </p><p>
-        It can't see your private stuff, only make posts
+        But it <strong>needs permission</strong> to post reports to reddit
       </p>
     </div>
   </div>
 {{/if}}
 </div>
 
-{{#each item in detections}}<hr>
+{{!--{{#each item in detections}}<hr>
   {{removed-link item=item}}
 {{/each}}
 
@@ -51,4 +51,4 @@
 <button class='btn btn-default form-control' {{action 'showMore'}}>
   {{detectionsNotShown.length}} more [removed] items not shown
 </button>
-{{/if}}
+{{/if}}--}}
