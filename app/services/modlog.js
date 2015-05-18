@@ -15,7 +15,9 @@ export default Ember.Service.extend({
     return anon('/api/info').get({url: url}).then(function(result) {
       return result.data.children.getEach('data');
     }).then(function(known) {
-      if (!known || !known.length) {throw 'No known posts for ' + url;}
+      return known.filter(function(item) {return item.author !== '[deleted]';});
+    }).then(function(known) {
+      if (!known.length) {throw 'No known posts for ' + url;}
       if (known.length === 1) {throw 'Not enough posts for ' + url;}
       var mirror = known.get('firstObject.id');
       return anon('/duplicates/$article').listing({
@@ -35,7 +37,9 @@ export default Ember.Service.extend({
 
   detected: function() {return [];}.property(),
   reported: function() {return [];}.property(),
-
+  scannedUsers: function() {return {};}.property(),
+  unprocessed: Ember.computed.setDiff('detected', 'processed'),
+  processed: function() {return [];}.property(),
   shouldReport: Ember.computed.alias('snoocore.isLoggedIn'),
 
   scanLoop: function(listing) {
@@ -51,27 +55,33 @@ export default Ember.Service.extend({
         return removed.filter(function(item) {
           return !detected.findProperty('id', item.id);
         });
-      }).then(function(removed) {
-        detected.addObjects(removed);
-        if (!shouldReport) {return;}
-        return Ember.RSVP.all(removed.map(function(item) {
-          return snoo('/api/submit').post({
-            sr: 'modlog',
-            kind: 'link',
-            title: item.title,
-            url: 'https://www.reddit.com' + item.permalink,
-            extension: 'json',
-            sendreplies: false
-          }).then(function() {
-            reported.addObject(item);
-          }).catch(function() {
-            //console.warn(error, error.stack);
-          });
-        }));
       }).then(loop);
     }
     return loop();
   },
+
+  unprocessedDidChange: function() {
+    var snoo = this.get('snoocore.api');
+    if (!this.get('shouldReport')) {return;}
+    var unprocessed = this.get('unprocessed').slice();
+    var reported = this.get('reported');
+    if (!unprocessed.length) {return;}
+    this.get('processed').addObjects(unprocessed);
+    return Ember.RSVP.all(unprocessed.map(function(item) {
+      return snoo('/api/submit').post({
+        sr: 'modlog',
+        kind: 'link',
+        title: item.title,
+        url: 'https://www.reddit.com' + item.permalink,
+        extension: 'json',
+        sendreplies: false
+      }).then(function() {
+        reported.addObject(item);
+      }).catch(function() {
+        //console.warn(error, error.stack);
+      });
+    }));
+  }.observes('unprocessed.@each', 'shouldReport').on('init'),
 
   scanListing: function(listing, detected, before) {
     var anon = this.get('snoocore.anon');
@@ -88,9 +98,32 @@ export default Ember.Service.extend({
       return posts.filterProperty('over_18', false);
     }).then(function(posts) {
       before = posts.get('firstObject.name');
-      return Ember.RSVP.all(posts.map(function(post) {
-        return modlog.scanUrl(post.url).catch(function(e) {
-          console.warn(e);
+      return posts.getEach('author').uniq().without('[deleted]');
+    }).then(function(authors) {
+      return Ember.RSVP.all(authors.map(function(author) {
+        return anon('/user/' + author + '/overview').listing({
+          limit: 100
+        }).then(function(slice) {
+          return slice.children.getEach('data');
+        }).then(function(items) {
+          var urls = items.getEach('url').without(undefined).uniq().slice(0, 10);
+          return Ember.RSVP.all(urls.map(function(url) {
+            return modlog.scanUrl(url).catch(function(e) {
+              console.warn(e);
+              return [];
+            });
+          })).then(function(removedLists) {
+            var removed = [];
+            removedLists.forEach(function(items) {
+              removed.addObjects(items.filter(function(post) {
+                return !detected.findProperty('id', post.id);
+              }));
+            });
+            detected.addObjects(removed);
+            return removed;
+          });
+        }).catch(function(error) {
+          console.warn('error with', author, error);
           return [];
         });
       }));
@@ -98,9 +131,6 @@ export default Ember.Service.extend({
       var removed = [];
       removedLists.forEach(function(items) {
         removed.addObjects(items);
-      });
-      removed = removed.filter(function(post) {
-        return !detected.findProperty('id', post.id);
       });
       removed.listing = listing;
       removed.nextbefore = before;

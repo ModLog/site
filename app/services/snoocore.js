@@ -27,6 +27,7 @@ export default Ember.Service.extend({
         duration: 'temporary',
         key: config.consumerKey,
         redirectUri: config.redirectUrl,
+        throttle: 2000,
         scope: this.get('scope')
       }
     });
@@ -42,7 +43,8 @@ export default Ember.Service.extend({
         duration: 'temporary',
         key: config.consumerKey,
         redirectUri: config.redirectUrl,
-        scope: ['read']
+        throttle: 2000,
+        scope: ['read', 'history']
       }
     });
   }.property('userAgent'),
