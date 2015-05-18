@@ -14,8 +14,6 @@ export default Ember.Service.extend({
   userAgent: 'ModLog 0.0.1 by go1dfish',
 
   scope: [
-    'identity',
-    'read',
     'submit'
   ],
 
@@ -34,6 +32,21 @@ export default Ember.Service.extend({
     });
   }.property('userAgent', 'scope'),
 
+  anon: function() {
+    return new Snoocore({
+      userAgent: this.get('userAgent'),
+      decodeHtmlEntities: true,
+      oauth: {
+        type: 'implicit',
+        mobile: false,
+        duration: 'temporary',
+        key: config.consumerKey,
+        redirectUri: config.redirectUrl,
+        scope: ['read']
+      }
+    });
+  }.property('userAgent'),
+
   loginUrl: function() {
     return this.get('api').getImplicitAuthUrl();
   }.property('user', 'api'),
@@ -45,11 +58,9 @@ export default Ember.Service.extend({
     if (code) {
       return snoo.auth(code).then(function() {
         self.set('isLoggedIn', true);
-        return snoo('/api/v1/me').get();
-      }).then(function(res) {
-        self.set('user', res);
+        return true;
       });
     }
-    return false;
+    return Ember.RSVP.resolve(false);
   }
 });

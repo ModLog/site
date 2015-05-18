@@ -1,0 +1,54 @@
+<div class='jumbotron'>
+{{#if snoocore.isLoggedIn}}
+  <h1>
+    {{#if modlog.detected.length}}{{modlog.detected.length}}{{else}}?{{/if}}
+    [removed] |
+    {{modlog.reported.length}} reported
+  </h1>
+{{else}}
+  <h2>What if you could make reddit more transparent?</h2>
+  <h3>without authority, effort or skill; simply the desire for change</h3>
+  <h2 class='well monitor-button'>
+    <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-primary btn-lg'>
+      Allow posts
+    </a>
+    <span class='label label-default'>
+      {{#if modlog.detected.length}}{{modlog.detected.length}}{{else}}?{{/if}}
+      [removed]
+    </span>
+  </h2>
+  <div class='row'>
+    <div class='col-md-6'>
+      <p>
+        You Can! All it takes is a push of a button
+      </p><p>
+        (and clicking
+        <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-danger'>Allow</a>
+        on the next page)
+      </p>
+      <p>Some karma is necessary to avoid captchas</p>
+      <p>Dedicated bot accounts are recommended</p>
+    </div><div class='col-md-6'>
+      <p>
+        ModLog is a removal detection bot for the web
+      </p><p>
+        It's already finding [removed] stuff with your browser
+      </p><p>
+        But it needs permission to post reports to reddit
+      </p><p>
+        It can't see your private stuff, only make posts
+      </p>
+    </div>
+  </div>
+{{/if}}
+</div>
+
+{{#each item in detections}}<hr>
+  {{removed-link item=item}}
+{{/each}}
+
+{{#if detectionsNotShown.length}}
+<button class='btn btn-default form-control' {{action 'showMore'}}>
+  {{detectionsNotShown.length}} more [removed] items not shown
+</button>
+{{/if}}

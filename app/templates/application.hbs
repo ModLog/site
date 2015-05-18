@@ -1,17 +1,28 @@
 <div class='navbar navbar-default'>
   <div class='container'>
     <div class='navbar-header'>
-      {{link-to 'Public Moderation Logs for reddit' 'index' class='navbar-brand'}}
+      {{#link-to 'index' class='navbar-brand'}}
+        <span class='glyphicon glyphicon-search'></span>
+        ModLog for reddit
+      {{/link-to}}
     </div>
     <div id='navbar' class='navbar-collapse collapse'>
       <ul class='nav navbar-nav'>
       </ul>
       <ul class='nav navbar-nav navbar-right'>
-        {{!--{{#unless model.user}}
-          <li><a href='{{model.loginUrl}}'>Login</a></li>
-        {{/unless}}--}}
       </ul>
     </div>
   </div>
 </div>
 <div id='maincontainer' class='container'>{{outlet}}</div>
+
+<hr>
+
+<footer id='footer'>
+  <h5>{{#link-to 'privacy'}}<span class='glyphicon glyphicon-eye-close'></span> Privacy Policy <span class='glyphicon glyphicon-eye-close'></span>{{/link-to}} | All <a target='github' href='https://github.com/ModLog'>code</a> licensed under <a href='http://www.wtfpl.net' target='license'>WTFPLv2</a>.  Build something!</h5>
+  <hr>
+  <blockquote>
+    Never doubt that a small group of thoughtful, committed citizens can change the world; indeed, it’s the only thing that ever has.
+    — Margaret Mead
+  </blockquote>
+</footer>

@@ -56,7 +56,8 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-
+    ENV.consumerKey = 'UA_O1fRBjh7_lQ';
+    ENV.redirectUrl = 'https://modlog.github.io/#/?';
   }
 
   return ENV;

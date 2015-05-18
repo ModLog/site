@@ -8,8 +8,11 @@ export default Ember.Route.extend({
   },
 
   redirect: function() {
-    if (this.get('snoocore').checkLogin()) {
-      this.transitionTo('index');
-    }
+    var route = this;
+    return this.get('snoocore').checkLogin().then(function(isLoggedIn) {
+      if (isLoggedIn) {
+        route.transitionTo('monitor');
+      }
+    });
   }
 });
