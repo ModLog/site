@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Controller.extend({
   modlog: Ember.inject.service(),
   snoocore: Ember.inject.service(),
-  
+
   detectedSort: ['score:desc'],
   detected: Ember.computed.sort('modlog.detected', 'detectedSort'),
 
@@ -17,7 +17,7 @@ export default Ember.Controller.extend({
   detectionsNotShown: Ember.computed.setDiff('detected', 'detections'),
 
   startScanning: function() {
-    this.get('modlog').scanLoop('all');
+    this.get('modlog').scanLoop('all/new');
   }.on('init'),
 
   actions: {

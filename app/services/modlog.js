@@ -40,14 +40,14 @@ export default Ember.Service.extend({
 
   scanLoop: function(listing) {
     var modlog = this;
-    var after;
+    var before;
     var detected = this.get('detected');
     var reported = this.get('reported');
     var snoo = this.get('snoocore.api');
     function loop() {
       var shouldReport = modlog.get('snoocore.isLoggedIn')
-      return modlog.scanListing(listing, detected, after).then(function(removed) {
-        after = removed.nextAfter;
+      return modlog.scanListing(listing, detected, before).then(function(removed) {
+        before = removed.nextbefore;
         return removed.filter(function(item) {
           return !detected.findProperty('id', item.id);
         });
@@ -73,13 +73,13 @@ export default Ember.Service.extend({
     return loop();
   },
 
-  scanListing: function(listing, detected, after) {
+  scanListing: function(listing, detected, before) {
     var anon = this.get('snoocore.anon');
     var modlog = this;
     detected = detected || [];
     return anon('/r/' + listing).listing({
       limit: 10,
-      after: after
+      before: before
     }).then(function(slice) {
       return slice.children.getEach('data');
     }).then(function(posts) {
@@ -87,7 +87,7 @@ export default Ember.Service.extend({
     }).then(function(posts) {
       return posts.filterProperty('over_18', false);
     }).then(function(posts) {
-      after = posts.get('lastObject.name');
+      before = posts.get('firstObject.name');
       return Ember.RSVP.all(posts.map(function(post) {
         return modlog.scanUrl(post.url).catch(function(e) {
           console.warn(e);
@@ -103,7 +103,7 @@ export default Ember.Service.extend({
         return !detected.findProperty('id', post.id);
       });
       removed.listing = listing;
-      removed.nextAfter = after;
+      removed.nextbefore = before;
       return removed;
     });
   }
