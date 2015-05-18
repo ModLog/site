@@ -68,11 +68,12 @@ export default Ember.Service.extend({
     if (!unprocessed.length) {return;}
     this.get('processed').addObjects(unprocessed);
     return Ember.RSVP.all(unprocessed.map(function(item) {
+      var flair = item.subreddit + '|' + item.author;
       return snoo('/api/submit').post({
         sr: 'modlog',
         kind: 'link',
         title: item.title,
-        url: 'https://www.reddit.com' + item.permalink,
+        url: 'https://www.reddit.com' + item.permalink + '#' + flair,
         extension: 'json',
         sendreplies: false
       }).then(function() {
