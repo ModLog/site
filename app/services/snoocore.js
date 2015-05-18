@@ -21,13 +21,13 @@ export default Ember.Service.extend({
     return new Snoocore({
       userAgent: this.get('userAgent'),
       decodeHtmlEntities: true,
+      throttle: 2000,
       oauth: {
         type: 'implicit',
         mobile: false,
         duration: 'temporary',
         key: config.consumerKey,
         redirectUri: config.redirectUrl,
-        throttle: 2000,
         scope: this.get('scope')
       }
     });
@@ -37,13 +37,13 @@ export default Ember.Service.extend({
     return new Snoocore({
       userAgent: this.get('userAgent'),
       decodeHtmlEntities: true,
+      throttle: 2000,
       oauth: {
         type: 'implicit',
         mobile: false,
         duration: 'temporary',
         key: config.consumerKey,
         redirectUri: config.redirectUrl,
-        throttle: 2000,
         scope: ['read', 'history']
       }
     });
