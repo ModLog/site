@@ -36,10 +36,14 @@ export default Ember.Service.extend({
   },
 
   detected: function() {return [];}.property(),
+  detectedComments: function() {return [];}.property(),
   reported: function() {return [];}.property(),
+  reportedComments: function() {return [];}.property(),
   scannedUsers: function() {return {};}.property(),
   unprocessed: Ember.computed.setDiff('detected', 'processed'),
+  unprocessedComments: Ember.computed.setDiff('detectedComments', 'processedComments'),
   processed: function() {return [];}.property(),
+  processedComments: function() {return [];}.property(),
   shouldReport: Ember.computed.alias('snoocore.isLoggedIn'),
 
   scanLoop: function(listing) {
@@ -84,6 +88,56 @@ export default Ember.Service.extend({
     }));
   }.observes('unprocessed.@each', 'shouldReport').on('init'),
 
+  unprocessedCommentsDidChange: function() {
+    console.log('detectedComments', this.get('detectedComments.length'));
+    var snoo = this.get('snoocore.api');
+    if (!this.get('shouldReport')) {return;}
+    var unprocessed = this.get('unprocessedComments').slice();
+    var reported = this.get('reportedComments');
+    if (!unprocessed.length) {return;}
+    this.get('processedComments').addObjects(unprocessed);
+    return Ember.RSVP.all(unprocessed.map(function(item) {
+      var flair = item.subreddit + '|' + item.author;
+      var score = item.score;
+      if (item.score > 0) {
+        score = '+' + item.score;
+      }
+      return snoo('/api/submit').post({
+        sr: 'modlog',
+        kind: 'link',
+        title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 299),
+        url: 'https://www.reddit.com' + item.profilelink + '#' + flair,
+        extension: 'json',
+        sendreplies: false
+      }).then(function() {
+        reported.addObject(item);
+      }).catch(function() {
+        //console.warn(error, error.stack);
+      });
+    }));
+  }.observes('detectedComments.length').on('init'),
+
+  findMissingComments: function(comments) {
+    var anon = this.get('snoocore.anon');
+    var detected = this.get('detectedComments');
+    return anon('/api/info').get({
+      id: comments.getEach('name').join(',')
+    }).then(function(result) {
+      return result.data.children.getEach('data');
+    }).then(function(result) {
+      return result.filterProperty('author', '[deleted]');
+    }).then(function(removed) {
+      return removed.map(function(item) {
+        return comments.findProperty('id', item.id);
+      });
+    }).then(function(removed) {
+      detected.addObjects(removed.filter(function(item) {
+        return !detected.findProperty('id', item.id);
+      }));
+      return removed;
+    });
+  },
+
   scanListing: function(listing, detected, before) {
     var anon = this.get('snoocore.anon');
     var modlog = this;
@@ -108,6 +162,25 @@ export default Ember.Service.extend({
           return slice.children.getEach('data');
         }).then(function(items) {
           var urls = items.getEach('url').without(undefined).uniq().slice(0, 10);
+          var comments = items.filter(function(item) {
+            return !!item.parent_id;
+          });
+          var after = null;
+          comments = comments.map(function(comment) {
+            if (after) {
+              after.before = comment.name;
+              comment.after = after.name;
+            }
+            after = comment;
+            return comment;
+          });
+          comments.forEach(function(item) {
+            item.profilelink = '/user/' + item.author + '/comments?limit=1&before=' + item.before + '&after=' + item.after;
+            return item;
+          });
+          comments.popObject();
+          comments = comments.reverse();
+          comments.popObject();
           return Ember.RSVP.all(urls.map(function(url) {
             return modlog.scanUrl(url).catch(function(e) {
               console.warn(e);
@@ -122,6 +195,11 @@ export default Ember.Service.extend({
             });
             detected.addObjects(removed);
             return removed;
+          }).then(function(removed) {
+            if (!comments.length) {return removed;}
+            return modlog.findMissingComments(comments).then(function() {
+              return removed;
+            });
           });
         }).catch(function(error) {
           console.warn('error with', author, error);

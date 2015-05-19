@@ -17,8 +17,9 @@ export default Ember.Controller.extend({
   detectionsNotShown: Ember.computed.setDiff('detected', 'detections'),
 
   startScanning: function() {
+    if (!this.get('snoocore.isLoggedIn')) {return;}
     this.get('modlog').scanLoop('all/new');
-  }.on('init'),
+  }.observes('snoocore.isLoggedIn').on('init'),
 
   actions: {
     showMore: function() {

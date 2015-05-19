@@ -1,55 +1,25 @@
-<div class='jumbotron'>
+<div class='jumbotron text-center'>
 {{#if snoocore.isLoggedIn}}
-  <h1>
-    {{modlog.detected.length}}
-    [removed]
-    {{modlog.reported.length}} posted to /r/modlog
-  </h1>
-  <p>ModLog is now scanning for removals and reporting them as posts to /r/modlog</p>
-  <p>Thank you for participating!</p>
+  <p>ModLog is now scanning for removals and reporting them as posts to <a href='https://reddit.com/r/modlog/new' target='reddit'>/r/modlog</a></p>
+  <h2>
+    Posted: {{modlog.reported.length}} posts
+    {{modlog.reportedComments.length}} comments
+  </h2>
+  <p>Thank you for participating!  The bot will stop as soon as you close this tab, or in 1 hr</p>
 {{else}}
-  <h2>What if you could make reddit more transparent?</h2>
   {{!--<h3>without authority, effort or skill; simply the desire for change</h3>--}}
+  <h2>Power <a href='https://reddit.com/r/modlog/new' target='reddit'>/r/modlog</a> through collective action</h2>
   <h2 class='well monitor-button'>
     <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-primary btn-lg'>
-      Allow bot to post
+      Log bot in
     </a>
     <span class='label label-default'>
-      found {{modlog.detected.length}}
-      [removed]
+      Click 'allow' on next page.
     </span>
   </h2>
-  <div class='row'>
-    <div class='col-md-6'>
-      <p>
-        <strong>You Can!</strong> All it takes is the <strong>push of a button</strong>
-      </p><p>
-        (and clicking
-        <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-danger'>Allow</a>
-        on the <strong>next page</strong>)
-      </p><p>
-        This runs the bot for up to <strong>an hour</strong> in this tab
-      </p>
-    </div><div class='col-md-6'>
-      <p>
-        ModLog is a removal detection bot <strong>in your browser</strong>
-      </p><p>
-        <strong>You are already running it</strong> There's no install
-      </p><p>
-        But it <strong>needs permission</strong> to post to
-        <a href='https://reddit.com/r/modlog'>/r/modlog</a>
-      </p>
-    </div>
-  </div>
+  <h4>There is nothing to install, this runs in your browser.</h4>
+  <p>It can't access your PMs, Mod Mail, Mod Logs, Private Subreddits or any private data.</p>
+  <p><strong>All it does is post to /r/modlog</strong></p>
+  ModLog abides by all reddit rules and API access restrictions.
 {{/if}}
 </div>
-
-{{!--{{#each item in detections}}<hr>
-  {{removed-link item=item}}
-{{/each}}
-
-{{#if detectionsNotShown.length}}
-<button class='btn btn-default form-control' {{action 'showMore'}}>
-  {{detectionsNotShown.length}} more [removed] items not shown
-</button>
-{{/if}}--}}
