@@ -73,10 +73,14 @@ export default Ember.Service.extend({
     this.get('processed').addObjects(unprocessed);
     return Ember.RSVP.all(unprocessed.map(function(item) {
       var flair = item.subreddit + '|' + item.author;
+      var score = item.score;
+      if (item.score > 0) {
+        score = '+' + item.score;
+      }
       return snoo('/api/submit').post({
         sr: 'modlog',
         kind: 'link',
-        title: item.title,
+        title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
         url: 'https://www.reddit.com' + item.permalink + '#' + flair,
         extension: 'json',
         sendreplies: false
@@ -89,7 +93,6 @@ export default Ember.Service.extend({
   }.observes('unprocessed.@each', 'shouldReport').on('init'),
 
   unprocessedCommentsDidChange: function() {
-    console.log('detectedComments', this.get('detectedComments.length'));
     var snoo = this.get('snoocore.api');
     if (!this.get('shouldReport')) {return;}
     var unprocessed = this.get('unprocessedComments').slice();
