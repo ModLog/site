@@ -9,3 +9,15 @@
 .monitor-button .btn-lg {
   font-size: 60%;
 }
+
+body {
+  background-image: url(https://i.imgur.com/NGmRdaM.jpg);
+  background-position: center top;
+  background-attachment: fixed;
+}
+
+.well,
+blockquote,
+.jumbotron {
+  background-color: rgba(255, 255, 255, 0.75);
+}
