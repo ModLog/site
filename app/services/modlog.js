@@ -81,7 +81,7 @@ export default Ember.Service.extend({
         sr: 'modlog',
         kind: 'link',
         title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
-        url: 'https://zh.reddit.com' + item.permalink + '#' + flair,
+        url: 'https://us.reddit.com' + item.permalink + '#' + flair,
         extension: 'json',
         sendreplies: false
       }).then(function() {
@@ -109,7 +109,7 @@ export default Ember.Service.extend({
         sr: 'modlog',
         kind: 'link',
         title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 299),
-        url: 'https://zh.reddit.com' + item.profilelink + '#' + flair,
+        url: 'https://us.reddit.com' + item.profilelink + '#' + flair,
         extension: 'json',
         sendreplies: false
       }).then(function() {
