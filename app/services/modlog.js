@@ -164,7 +164,7 @@ export default Ember.Service.extend({
     }).then(function(posts) {
       return posts.filterProperty('is_self', false);
     }).then(function(posts) {
-      return posts.filterProperty('over_18', false);
+      return posts;//.filterProperty('over_18', false);
     }).then(function(posts) {
       before = posts.get('firstObject.name');
       return posts.getEach('author').uniq().without('[deleted]');
