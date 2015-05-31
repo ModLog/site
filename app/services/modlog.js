@@ -88,6 +88,17 @@ export default Ember.Service.extend({
         reported.addObject(item);
       }).catch(function() {
         //console.warn(error, error.stack);
+      }).finally(function() {
+        if (item.score > 100) {
+          return snoo('/api/submit').post({
+            sr: 'snew',
+            kind: 'link',
+            title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
+            url: 'https://us.reddit.com' + item.permalink + '#' + flair,
+            extension: 'json',
+            sendreplies: false
+          });
+        }
       });
     }));
   }.observes('unprocessed.@each', 'shouldReport').on('init'),
