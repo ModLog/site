@@ -114,7 +114,7 @@ export default Ember.Service.extend({
       }).catch(function() {
         //console.warn(error, error.stack);
       }).finally(function() {
-        if (item.score > 100) {
+        if (item.score > 100 || item.num_comments > 50) {
           return snoo('/api/submit').post({
             sr: 'snew',
             kind: 'link',
