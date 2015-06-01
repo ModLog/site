@@ -50,7 +50,7 @@ export default Ember.Service.extend({
   }.property('userAgent'),
 
   loginUrl: function() {
-    return this.get('api').getImplicitAuthUrl();
+    return this.get('api').getImplicitAuthUrl().replace('www.reddit', 'us.reddit');
   }.property('user', 'api'),
 
   checkLogin: function() {

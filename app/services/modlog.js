@@ -12,6 +12,7 @@ export default Ember.Service.extend({
 
   scanUrl: function(url) {
     var anon = this.get('snoocore.anon');
+    var snoo = this.get('snoocore.api');
     return anon('/api/info').get({url: url}).then(function(result) {
       return result.data.children.getEach('data');
     }).then(function(known) {
@@ -28,6 +29,28 @@ export default Ember.Service.extend({
         var knownIds = known.getEach('id');
         var dupeIds = dupes.getEach('id').concat([mirror]);
         var removedIds = knownIds.slice().removeObjects(dupeIds);
+        var politic = known.findProperty('subreddit', 'politics');
+        var worldnews = known.findProperty('subreddit', 'worldnews');
+        if (politic) {
+          snoo('/api/submit').post({
+            sr: 'politic',
+            kind: 'link',
+            title: (politic.title).slice(0, 299),
+            url: politic.url,
+            extension: 'json',
+            sendreplies: false
+          });
+        }
+        if (worldnews) {
+          snoo('/api/submit').post({
+            sr: 'FORTWorldNews',
+            kind: 'link',
+            title: (worldnews.title).slice(0, 299),
+            url: worldnews.url,
+            extension: 'json',
+            sendreplies: false
+          });
+        }
         return removedIds.map(function(id) {
           return known.findProperty('id', id);
         });
@@ -71,6 +94,8 @@ export default Ember.Service.extend({
     var reported = this.get('reported');
     if (!unprocessed.length) {return;}
     this.get('processed').addObjects(unprocessed);
+
+
     return Ember.RSVP.all(unprocessed.map(function(item) {
       var flair = item.subreddit + '|' + item.author;
       var score = item.score;
