@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+
+  "name": "ModLog lazy [pressiah button]",
+  "description": "This extension automatically clicks the ModLog accept button",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://us.reddit.com/api/v1/authorize*"
+      ],
+      "js": ["jquery-2.1.4.min.js", "content.js"]
+    }
+  ]
+}
