@@ -5,7 +5,11 @@
     </div>
     <div id='navbar' class='navbar-collapse collapse'>
       <ul class='nav navbar-nav'>
-        <li>{{link-to '[pressiah button]' 'monitor'}}</li>
+        <li>
+          <a {{bind-attr href=model.loginUrl}}>
+            [pressiah button]
+          </a>
+        </li>
       </ul>
       <ul class='nav navbar-nav navbar-right'>
         <li><a href='https://www.reddit.com/live/uocz16gmx2s7' target='reddit'>PRoFS gRadio <span class='glyphicon glyphicon-music'></span></a></li>
