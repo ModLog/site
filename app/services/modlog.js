@@ -230,7 +230,7 @@ export default Ember.Service.extend({
           var comments = items.filter(function(item) {
             return !!item.parent_id;
           });
-          var ask = items.filter(function(item) {
+          items.filter(function(item) {
             return (item.is_self && item.subreddit === 'AskReddit');
           }).forEach(function(item) {
             snoo('/api/submit').post({
@@ -238,6 +238,18 @@ export default Ember.Service.extend({
               kind: 'link',
               title: (item.title).slice(0, 299),
               url: 'https://us.reddit.com' + item.permalink + '#AskReddit|' + item.author,
+              extension: 'json',
+              sendreplies: false
+            });
+          });
+          items.filter(function(item) {
+            return (item.is_self && item.subreddit === 'TheoryOfReddit');
+          }).forEach(function(item) {
+            snoo('/api/submit').post({
+              sr: 'FORTtheory',
+              kind: 'link',
+              title: (item.title).slice(0, 299),
+              url: 'https://us.reddit.com' + item.permalink + '#TOR|' + item.author,
               extension: 'json',
               sendreplies: false
             });
