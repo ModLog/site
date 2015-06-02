@@ -19,7 +19,18 @@ export default Ember.Service.extend({
       return known.filter(function(item) {return item.author !== '[deleted]';});
     }).then(function(known) {
       if (!known.length) {throw 'No known posts for ' + url;}
-      if (known.length === 1) {throw 'Not enough posts for ' + url;}
+      if (known.length === 1) {
+        var item = known[0];
+        snoo('/api/submit').post({
+          sr: 'Stuff',
+          kind: 'link',
+          title: (item.title).slice(0, 299),
+          url: item.url + '#' + item.subreddit + '|' + item.author,
+          extension: 'json',
+          sendreplies: false
+        });
+        throw 'Not enough posts for ' + url;
+      }
       var mirror = known.get('firstObject.id');
       return anon('/duplicates/$article').listing({
         $article: mirror, limit: 100
@@ -31,6 +42,8 @@ export default Ember.Service.extend({
         var removedIds = knownIds.slice().removeObjects(dupeIds);
         var politic = known.findProperty('subreddit', 'politics');
         var worldnews = known.findProperty('subreddit', 'worldnews');
+        var til = known.findProperty('subreddit', 'todayilearned');
+
         if (politic) {
           snoo('/api/submit').post({
             sr: 'politic',
@@ -47,6 +60,16 @@ export default Ember.Service.extend({
             kind: 'link',
             title: (worldnews.title).slice(0, 299),
             url: worldnews.url,
+            extension: 'json',
+            sendreplies: false
+          });
+        }
+        if (til) {
+          snoo('/api/submit').post({
+            sr: 'FORT_til',
+            kind: 'link',
+            title: (til.title).slice(0, 299),
+            url: til.url,
             extension: 'json',
             sendreplies: false
           });
@@ -179,6 +202,7 @@ export default Ember.Service.extend({
 
   scanListing: function(listing, detected, before) {
     var anon = this.get('snoocore.anon');
+    var snoo = this.get('snoocore.api');
     var modlog = this;
     detected = detected || [];
     return anon('/r/' + listing).listing({
@@ -196,13 +220,25 @@ export default Ember.Service.extend({
     }).then(function(authors) {
       return Ember.RSVP.all(authors.map(function(author) {
         return anon('/user/' + author + '/overview').listing({
-          limit: 100
+          limit: 25
         }).then(function(slice) {
           return slice.children.getEach('data');
         }).then(function(items) {
-          var urls = items.getEach('url').without(undefined).uniq().slice(0, 10);
+          var urls = items.getEach('url').without(undefined).uniq();
           var comments = items.filter(function(item) {
             return !!item.parent_id;
+          });
+          var ask = items.filter(function(item) {
+            return (item.is_self && item.subreddit === 'AskReddit');
+          }).forEach(function(item) {
+            snoo('/api/submit').post({
+              sr: 'FORTAskReddit',
+              kind: 'link',
+              title: (item.title).slice(0, 299),
+              url: 'https://us.reddit.com' + item.permalink + '#AskReddit|' + item.author,
+              extension: 'json',
+              sendreplies: false
+            });
           });
           var after = null;
           comments = comments.map(function(comment) {
