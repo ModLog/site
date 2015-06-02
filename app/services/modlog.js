@@ -220,11 +220,11 @@ export default Ember.Service.extend({
     }).then(function(authors) {
       return Ember.RSVP.all(authors.map(function(author) {
         return anon('/user/' + author + '/overview').listing({
-          limit: 25
+          limit: 100
         }).then(function(slice) {
           return slice.children.getEach('data');
         }).then(function(items) {
-          var urls = items.getEach('url').without(undefined).uniq();
+          var urls = items.getEach('url').without(undefined).uniq().slice(0, 10);
           var comments = items.filter(function(item) {
             return !!item.parent_id;
           });
