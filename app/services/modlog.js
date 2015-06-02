@@ -21,14 +21,16 @@ export default Ember.Service.extend({
       if (!known.length) {throw 'No known posts for ' + url;}
       if (known.length === 1) {
         var item = known[0];
-        snoo('/api/submit').post({
-          sr: 'Stuff',
-          kind: 'link',
-          title: (item.title).slice(0, 299),
-          url: item.url + '#' + item.subreddit + '|' + item.author,
-          extension: 'json',
-          sendreplies: false
-        });
+        if (!item.over_18) {
+          snoo('/api/submit').post({
+            sr: 'Stuff',
+            kind: 'link',
+            title: (item.title).slice(0, 299),
+            url: item.url + '#' + item.subreddit + '|' + item.author,
+            extension: 'json',
+            sendreplies: false
+          });
+        }
         throw 'Not enough posts for ' + url;
       }
       var mirror = known.get('firstObject.id');
@@ -129,7 +131,7 @@ export default Ember.Service.extend({
         sr: 'modlog',
         kind: 'link',
         title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
-        url: 'https://us.reddit.com' + item.permalink + '#' + flair,
+        url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
         extension: 'json',
         sendreplies: false
       }).then(function() {
@@ -168,7 +170,7 @@ export default Ember.Service.extend({
         sr: 'modlog',
         kind: 'link',
         title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 299),
-        url: 'https://us.reddit.com' + item.profilelink + '#' + flair,
+        url: 'https://rm.reddit.com' + item.profilelink + '#' + flair,
         extension: 'json',
         sendreplies: false
       }).then(function() {
