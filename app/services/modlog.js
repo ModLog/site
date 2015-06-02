@@ -21,7 +21,7 @@ export default Ember.Service.extend({
       if (!known.length) {throw 'No known posts for ' + url;}
       if (known.length === 1) {
         var item = known[0];
-        if (!item.over_18) {
+        if (!item.over_18 && !item.domain.match(/(imgur|reddit.com)/)) {
           snoo('/api/submit').post({
             sr: 'Stuff',
             kind: 'link',
