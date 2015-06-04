@@ -47,6 +47,12 @@ blockquote,
   text-shadow: 3px 3px white;
 }
 
+.jumbotron h1 a {
+  background-color: salmon;
+  opacity: 0.666;
+  text-decoration: none;
+}
+
 .gradio-controls:hover {
   opacity: 0.666;
 }
