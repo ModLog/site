@@ -1,0 +1,9 @@
+<div class='well'>
+  {{ember-youtube ytid=update.ytid class='pull-right'
+    playing="ytPlaying" ended="ytEnded"
+    autoplay=gradio.autoplay showControls=false}}
+  <h5><a href="https://us.reddit.com{{unbound update.post.permalink}}">
+    {{update.post.title}}</a> - /u/{{update.post.author}}</h5>
+    {{{update.comment.body_html}}}
+    <footer>/u/{{update.comment.author}}</footer>
+</div>

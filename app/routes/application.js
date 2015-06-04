@@ -2,6 +2,8 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
   snoocore: Ember.inject.service(),
+  gradio: Ember.inject.service(),
+
 
   model: function() {
     return this.get('snoocore');
@@ -14,5 +16,20 @@ export default Ember.Route.extend({
         route.transitionTo('monitor');
       }
     });
+  },
+
+  actions: {
+    playRadio: function() {
+      this.get('gradio').play();
+    },
+    stopRadio: function() {
+      this.get('gradio').stop();
+    },
+    playNext: function() {
+      this.get('gradio').playNext();
+    },
+    playPrevious: function() {
+      this.get('gradio').playPrevious();
+    }
   }
 });

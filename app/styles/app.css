@@ -2,6 +2,10 @@
 
 #footer {text-align: center;}
 
+.well .EmberYoutube {
+  margin: 1em;
+}
+
 .monitor-button {
   text-align: center;
 }
@@ -19,4 +23,15 @@ body {
 blockquote,
 .jumbotron {
   background-color: rgba(255, 255, 255, 0.75);
+}
+
+.gradio-controls {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  opacity: 0.333;
+}
+
+.gradio-controls:hover {
+  opacity: 0.666;
 }

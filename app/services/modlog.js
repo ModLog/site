@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-export default Ember.Service.extend({
+export default Ember.Service.extend(Ember.Evented, {
   snoocore: Ember.inject.service(),
 
   handleExpiredAuth: function() {
@@ -13,7 +13,7 @@ export default Ember.Service.extend({
   multis: {},
 
   subs: function() {
-    return ['snew', 'modlog'].concat(this.getMulti('self')).concat(this.getMulti('link')).uniq().sort();
+    return ['snew', 'modlog', 'moderationlog', 'removedcomments', 'moderationlog'].concat(this.getMulti('self')).concat(this.getMulti('link')).uniq().sort();
   }.property('multis', 'multis'),
 
   getMulti: function(name) {
@@ -146,10 +146,10 @@ export default Ember.Service.extend({
       }).finally(function() {
         if (item.score > 100 || item.num_comments > 50) {
           return snoo('/api/submit').post({
-            sr: 'snew',
+            sr: 'ModerationLog',
             kind: 'link',
             title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
-            url: 'https://us.reddit.com' + item.permalink + '#' + flair,
+            url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
             extension: 'json',
             sendreplies: false
           });
@@ -180,6 +180,17 @@ export default Ember.Service.extend({
         sendreplies: false
       }).then(function() {
         reported.addObject(item);
+      }).finally(function() {
+        if (Math.abs(item.score) > 25 || item.body.length > 1000) {
+          return snoo('/api/submit').post({
+            sr: 'RemovedComments',
+            kind: 'link',
+            title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 299),
+            url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
+            extension: 'json',
+            sendreplies: false
+          });
+        }
       }).catch(function() {
         //console.warn(error, error.stack);
       });
@@ -212,7 +223,6 @@ export default Ember.Service.extend({
     var self = this;
     var linksubs = this.getMulti('link');
     var selfsubs = this.getMulti('self');
-    console.log(linksubs, selfsubs, posts.getEach('subreddit').uniq());
     this.getMulti('link').forEach(function(sub) {
       return posts.filterProperty('is_self', false).filter(function(item) {
         return !!item.url && self.getMulti(sub).contains(item.subreddit.toLowerCase());

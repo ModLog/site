@@ -26,7 +26,7 @@ module.exports = function(environment) {
 
     contentSecurityPolicy: {
       'default-src': "'none'",
-      'script-src': "'self'",
+      'script-src': "'self' 'unsafe-eval'",
       'font-src': "'self' http://maxcdn.bootstrapcdn.com https://maxcdn.bootstrapcdn.com http://fonts.gstatic.com https://fonts.gstatic.com",
       'connect-src': "'self' https://*.reddit.com http://*.reddit.com",
       'img-src': "'self' http://maxcdn.bootstrapcdn.com https://maxcdn.bootstrapcdn.com http://*.redditmedia.com data",

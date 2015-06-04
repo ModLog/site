@@ -11,42 +11,35 @@
           </a>
         </li>
       </ul>
-      <ul class='nav navbar-nav navbar-right'>
-        <li><a href='https://www.reddit.com/live/uocz16gmx2s7' target='reddit'>PRoFS gRadio <span class='glyphicon glyphicon-music'></span></a></li>
-      </ul>
     </div>
   </div>
 </div>
 <div id='maincontainer' class='container'>{{outlet}}</div>
+{{#if gradio.lastUpdate.post}}
+  {{profs-gradio update=gradio.lastUpdate class='container'}}
+{{/if}}
 <footer id='footer' class='container'>
-  <hr>
-  <h1><a href='https://us.reddit.com/live/uocz16gmx2s7/'>Peoples Republic of Free /r/Snew</a></h1>
-  <div class='container'>{{declaration-of-independence-for-reddit}}</div>
-  <div class='row'>
-    <div class='col-md-6'>
-      <blockquote>
-        <p>"We do not like the idea of subreddits becoming platforms of disruption."</p>
-        <footer>
-          <a href='https://reddit.com/r/KotakuInAction/comments/2r6db5/official_confirmation_by_thehat2_hatman_of_reddit/' target='reddit'>Reddit Inc.</a>
-        </footer>
-      </blockquote>
-    </div><div class='col-md-6'>
-      <blockquote>
-        <p>"It's not our site's goal to be a completely free-speech platform."</p>
-        <footer>
-          <a href='http://www.npr.org/sections/alltechconsidered/2015/05/19/407971708/reddits-new-harassment-policy-aimed-at-creating-a-safe-platform' target='reddit'>Ellen Pao</a> interim CEO of reddit /u/ekjp
-        </footer>
-      </blockquote>
-    </div>
-  </div>
   <hr>
   <h5>
     All <a target='github' href='https://github.com/Fair-Share'>code and concepts</a>
     are licensed under <a href='http://www.wtfpl.net' target='license'>WTFPLv2</a>.  Build something!
     {{link-to 'Privacy Policy' 'privacy'}}
   </h5>
+  <h5><a href='https://us.reddit.com/r/POLITIC/comments/37ovia/politicbot_was_shadowbanned_yesterday_for_spam/'>
+    This app claims no affiliation with reddit inc. nor does reddit inc. endorse it.</a></h5>
   <strong>NO CONTENT OR DATA IS HOSTED HERE!!!</strong>  This is just a client application written in javascript.
-  <h4>This web application claims no affiliation with reddit inc. nor does reddit inc. endorse it.</h4>
-  <h5><a href='https://us.reddit.com/r/POLITIC/comments/37ovia/politicbot_was_shadowbanned_yesterday_for_spam/'>Quite the opposite in fact, the paper tigers who don scarlet letter in a barrel of incompetence have tried to kill this message no less than three times so far.</a></h5>
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/PGojqb0iVdM" frameborder="0" allowfullscreen></iframe>
 </footer>
+<div class='gradio-controls'>
+  <div class='btn-group'>
+    <a class='btn btn-default' href='https://www.reddit.com/live/uocz16gmx2s7' target='reddit'><span class='glyphicon glyphicon-music'></span> PRoFS <span class='label label-danger'>nsfw</span></a>
+  {{#if gradio.playlist.length}}
+    <button {{action 'playPrevious'}} class='btn btn-warning'><span class='glyphicon glyphicon-step-backward'></span></button>
+    {{#if gradio.autoplay}}
+      <button {{action 'stopRadio'}} class='btn btn-danger'><span class='glyphicon glyphicon-stop'></span></button>
+    {{else}}
+      <button {{action 'playRadio'}} class='btn btn-primary'><span class='glyphicon glyphicon-play'></span></button>
+    {{/if}}
+    <button {{action 'playNext'}} class='btn btn-warning'><span class='glyphicon glyphicon-step-forward'></span></button>
+  {{/if}}
+  </div>
+</div>

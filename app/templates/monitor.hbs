@@ -1,4 +1,4 @@
-<div class='jumbotron text-center'>
+<div class='text-center'>
 {{#if snoocore.isLoggedIn}}
   <p>ModLog is now scanning for removals and reporting them as posts to <a href='https://reddit.com/r/modlog/new' target='reddit'>/r/modlog</a></p>
   <h2>
@@ -7,24 +7,17 @@
   </h2>
   <p>Thank you for participating!  The bot will stop as soon as you close this tab, or in 1 hr</p>
 {{else}}
-  {{!--<h3>without authority, effort or skill; simply the desire for change</h3>--}}
-  <h2>Power <a href='https://reddit.com/r/modlog/new' target='reddit'>/r/modlog</a> through collective action</h2>
-  <h2 class='well monitor-button'>
-    <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-primary btn-lg'>
-      Log bot in
-    </a>
-    <span class='label label-default'>
-      Click 'allow' on next page.
-    </span>
-  </h2>
-  <h4>There is nothing to install, this runs in your browser.</h4>
-  <p>It can't access your PMs, Mod Mail, Mod Logs, Private Subreddits or any private data.</p>
-  <a href='https://www.reddit.com/r/self/comments/36ibh5/ushering_in_a_new_age_of_transparency_and/crei07f' target='reddit'>ModLog has been inspected by admins and abides by all reddit rules and API access restrictions.</a>
-{{/if}}
-<h4><a href="https://chrome.google.com/webstore/detail/modlog-lazy-pressiah-butt/ofkmlkdldhfkhbpcdfcefehljbahcieo?hl=en-US" target="chromeext">NEW! ModLog lazy [pressiah button] extension</a></h4>
-<p>Now powering
+Now powering
   {{#each sub in modlog.subs}}
     <a href='https://us.reddit.com/r/{{unbound sub}}' target='reddit'>/r/{{sub}}</a>
   {{/each}}
-</p>
+  <h2 class='well monitor-button'>
+    <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-primary btn-lg'>
+      [pressiah button]
+    </a>
+    <span class='label label-default'>
+      'allow' or <a href="https://chrome.google.com/webstore/detail/modlog-lazy-pressiah-butt/ofkmlkdldhfkhbpcdfcefehljbahcieo?hl=en-US" target="chromeext">[lazy pressiah]</a>
+    </span>
+  </h2>
+{{/if}}
 </div>
