@@ -1,16 +1,14 @@
 <div class='text-center'>
-{{#if snoocore.isLoggedIn}}
-  <p>ModLog is now scanning for removals and reporting them as posts to <a href='https://reddit.com/r/modlog/new' target='reddit'>/r/modlog</a></p>
-  <h2>
-    Posted: {{modlog.reported.length}} posts
-    {{modlog.reportedComments.length}} comments
-  </h2>
-  <p>Thank you for participating!  The bot will stop as soon as you close this tab, or in 1 hr</p>
-{{else}}
 Now powering
   {{#each sub in modlog.subs}}
     <a href='https://us.reddit.com/r/{{unbound sub}}' target='reddit'>/r/{{sub}}</a>
   {{/each}}
+{{#if snoocore.isLoggedIn}}
+  <h2>
+    Thank you for participating!
+  </h2>
+  <p>The bot will stop as soon as you close this tab, or in 1 hr</p>
+{{else}}
   <h2 class='well monitor-button'>
     <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-primary btn-lg'>
       [pressiah button]
