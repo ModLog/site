@@ -22,6 +22,10 @@ export default Ember.Service.extend(Ember.Evented, {
 
   autoplay: false,
 
+  updates: function() {
+    return [];
+  }.property(),
+
   play: function() {
     this.playNext();
   },
@@ -138,11 +142,14 @@ export default Ember.Service.extend(Ember.Evented, {
     return anon('/api/info').get({
       id: 't3_' + postId + ',t1_' + id
     }).then(function(result) {
-      self.set('lastUpdate', {
+      var update = {
+        url: link,
         post: Ember.get(result, 'data.children.0.data'),
         comment: Ember.get(result, 'data.children.1.data'),
         ytid: self.get('lastUpdate.ytid') || ytid
-      });
+      };
+      self.get('updates').insertAt(0, update);
+      self.set('lastUpdate', update);
     });
   }.on('didReceiveSocketEvent'),
 

@@ -15,9 +15,6 @@
   </div>
 </div>
 <div id='maincontainer' class='container'>{{outlet}}</div>
-{{#if gradio.lastUpdate.post}}
-  {{profs-gradio update=gradio.lastUpdate class='container'}}
-{{/if}}
 <footer id='footer' class='container'>
   <hr>
   <h5>
@@ -28,7 +25,11 @@
   <h5><a href='https://us.reddit.com/r/POLITIC/comments/37ovia/politicbot_was_shadowbanned_yesterday_for_spam/'>
     This app claims no affiliation with reddit inc. nor does reddit inc. endorse it.</a></h5>
   <strong>NO CONTENT OR DATA IS HOSTED HERE!!!</strong>  This is just a client application written in javascript.
+  <hr>
 </footer>
+{{#if gradio.lastUpdate.post}}
+  {{profs-gradio update=gradio.lastUpdate class='container'}}
+{{/if}}
 <div class='gradio-controls'>
   <div class='btn-group'>
     <a class='btn btn-default' href='https://www.reddit.com/live/uocz16gmx2s7' target='reddit'><span class='glyphicon glyphicon-music'></span> PRoFS <span class='label label-danger'>nsfw</span></a>

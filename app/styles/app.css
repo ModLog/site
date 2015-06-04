@@ -2,10 +2,6 @@
 
 #footer {text-align: center;}
 
-.well .EmberYoutube {
-  margin: 1em;
-}
-
 .monitor-button {
   text-align: center;
 }
@@ -30,6 +26,10 @@ blockquote,
   bottom: 0px;
   right: 0px;
   opacity: 0.333;
+}
+
+.profs-gradio .EmberYoutube {
+  margin: 1em;
 }
 
 .gradio-controls:hover {
