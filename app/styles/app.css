@@ -36,6 +36,17 @@ blockquote,
   margin: 1em;
 }
 
+.jumbotron {
+  background-image: url("http://i.imgur.com/uBO5IC6.jpg");
+  background-position: left 751px;
+}
+
+.jumbotron a {
+  color: black;
+  font-weight: bold;
+  text-shadow: 3px 3px white;
+}
+
 .gradio-controls:hover {
   opacity: 0.666;
 }
