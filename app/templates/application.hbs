@@ -32,7 +32,7 @@
 {{/if}}
 <div class='gradio-controls'>
   <div class='btn-group'>
-    <a class='btn btn-default' href='https://www.reddit.com/live/uocz16gmx2s7' target='reddit'><span class='glyphicon glyphicon-music'></span> PRoFS <span class='label label-danger'>nsfw</span></a>
+    {{#link-to 'radio' class='btn btn-default'}}<span class='glyphicon glyphicon-music'></span> PRoFS <span class='label label-danger'>nsfw</span>{{/link-to}}
   {{#if gradio.playlist.length}}
     <button {{action 'playPrevious'}} class='btn btn-warning'><span class='glyphicon glyphicon-step-backward'></span></button>
     {{#if gradio.autoplay}}

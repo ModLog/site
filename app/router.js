@@ -10,6 +10,7 @@ export default Router.map(function() {
   this.resource('scanner', {path: '/scan'}, function() {
     this.resource('scan', {path: ':subreddit'});
   });
+  this.route('radio');
   this.route('monitor');
   this.route('privacy');
 });
