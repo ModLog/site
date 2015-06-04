@@ -52,7 +52,7 @@ export default Ember.Service.extend({
     }).then(function(known) {
       return known.filter(function(item) {return item.author !== '[deleted]';});
     }).then(function(known) {
-      return;
+      if (!known) {return;}
       if (known.length === 1) {
         var item = known[0];
         if (!item.over_18 && !item.domain.match(/(imgur|reddit.com)/)) {
