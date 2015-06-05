@@ -53,23 +53,35 @@ export default Ember.Service.extend(Ember.Evented, {
       return known.filter(function(item) {return item.author !== '[deleted]';});
     }).then(function(known) {
       if (!known) {return;}
-      var mirror = known.get('firstObject.id');
+      var mirror = known.findProperty('subreddit', 'Stuff') || known.findProperty('subreddit', 'POLITIC') || known.get('firstObject.id');
       if (!mirror) {return;}
       return anon('/duplicates/$article').listing({
-        $article: mirror, limit: 100
+        $article: mirror.id, limit: 100
       }, {listingIndex: 1}).then(function(dupes) {
         return (dupes.children || []).getEach('data');
       }).then(function(dupes) {
         if (!known) {return [];}
         var knownIds = known.getEach('id');
-        var dupeIds = dupes.getEach('id').concat([mirror]);
+        var dupeIds = dupes.getEach('id').concat([mirror.id]);
         var removedIds = knownIds.slice().removeObjects(dupeIds);
         var known = known.sortBy('sort:desc');
         self.processPosts(known);
+        console.warn('found removed', removedIds);
         return removedIds.map(function(id) {
           return known.findProperty('id', id);
         });
       });
+    }).then(function(removedLists) {
+      var removed = [];
+      if (!removedLists) {return;}
+      removedLists.forEach(function(items) {
+        console.warn('removed items', items);
+        removed.addObjects((items || []).filter(function(post) {
+          return !detected.findProperty('id', post.id);
+        }));
+      });
+      detected.addObjects(removed);
+      return removed;
     });
   },
 
@@ -86,19 +98,12 @@ export default Ember.Service.extend(Ember.Evented, {
 
   scanLoop: function(listing) {
     var modlog = this;
-    var before;
-    var detected = this.get('detected');
     var reported = this.get('reported');
     var snoo = this.get('snoocore.api');
     function loop() {
       var shouldReport = modlog.get('snoocore.isLoggedIn');
       return modlog.fetchMultis().then(function() {
-        return modlog.scanListing(listing, detected, before);
-      }).then(function(removed) {
-        before = removed.nextbefore;
-        return (removed || []).filter(function(item) {
-          return !detected.findProperty('id', item.id);
-        })
+        return modlog.scanListing(listing);
       }).then(loop);
     }
     return loop();
@@ -211,18 +216,6 @@ export default Ember.Service.extend(Ember.Evented, {
     var self = this;
     var linksubs = this.getMulti('link');
     var selfsubs = this.getMulti('self');
-    posts.forEach(function(item) {
-      if (!item.over_18 && !item.domain.match(/(imgur|reddit.com)/)) {
-        snoo('/api/submit').post({
-          sr: 'Stuff',
-          kind: 'link',
-          title: (item.title).slice(0, 299),
-          url: item.url + '#' + item.subreddit + '|' + item.author,
-          extension: 'json',
-          sendreplies: false
-        });
-      }
-    });
     this.getMulti('link').forEach(function(sub) {
       return posts.filterProperty('is_self', false).filter(function(item) {
         return !!item.url && self.getMulti(sub).contains(item.subreddit.toLowerCase());
@@ -251,17 +244,32 @@ export default Ember.Service.extend(Ember.Evented, {
         });
       });
     });
+    return Ember.RSVP.all(posts.map(function(item) {
+      if (!item.over_18 && !item.domain.match(/(imgur|reddit.com)/)) {
+        snoo('/api/submit').post({
+          sr: 'Stuff',
+          kind: 'link',
+          title: (item.title).slice(0, 299),
+          url: item.url + '#' + item.subreddit + '|' + item.author,
+          extension: 'json',
+          sendreplies: false
+        }).finally(function() {
+          if (!item.is_self) {
+            return self.scanUrl(item.url);
+          }
+        });
+      }
+      return Ember.RSVP.resolve();
+    }));
   },
 
-  scanListing: function(listing, detected, before) {
+  scanListing: function(listing) {
     var anon = this.get('snoocore.anon');
     var snoo = this.get('snoocore.api');
     var modlog = this;
     var self = this;
-    detected = detected || [];
     return anon('/r/' + listing).listing({
-      limit: 10,
-      before: before
+      limit: 100
     }).then(function(slice) {
       return (slice.children || []).getEach('data');
     }).then(function(posts) {
@@ -269,7 +277,6 @@ export default Ember.Service.extend(Ember.Evented, {
     }).then(function(posts) {
       return posts;//.filterProperty('over_18', false);
     }).then(function(posts) {
-      before = posts.get('firstObject.name');
       self.processPosts(posts);
       return posts.getEach('author').uniq().without('[deleted]');
     }).then(function(authors) {
@@ -299,28 +306,8 @@ export default Ember.Service.extend(Ember.Evented, {
           comments.popObject();
           comments = comments.reverse();
           comments.popObject();
-          return Ember.RSVP.all(urls.map(function(url) {
-            return modlog.scanUrl(url).catch(function(e) {
-              console.warn(e);
-              return [];
-            });
-          })).then(function(removedLists) {
-            var removed = [];
-            if (!removedLists) {return;}
-            removedLists.forEach(function(items) {
-              removed.addObjects((items || []).filter(function(post) {
-                return !detected.findProperty('id', post.id);
-              }));
-            });
-            detected.addObjects(removed);
-            return removed;
-          }).then(function(removed) {
-            if (!removed) {return [];}
-            if (!comments.length) {return removed;}
-            return modlog.findMissingComments(comments).then(function() {
-              return removed;
-            });
-          });
+          if (!comments.length) {return [];}
+          return modlog.findMissingComments(comments);
         }).catch(function(error) {
           console.warn('error with', author, error);
           return [];
@@ -332,7 +319,6 @@ export default Ember.Service.extend(Ember.Evented, {
         removed.addObjects(items);
       });
       removed.listing = listing;
-      removed.nextbefore = before;
       return removed;
     });
   }
