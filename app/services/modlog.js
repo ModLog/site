@@ -164,7 +164,7 @@ export default Ember.Service.extend(Ember.Evented, {
           sr: 'RemovedComments',
           kind: 'link',
           title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 299),
-          url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
+          url: 'https://rm.reddit.com' + item.profilelink + '#' + flair,
           extension: 'json',
           sendreplies: false
         });
