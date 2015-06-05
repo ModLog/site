@@ -179,7 +179,7 @@ export default Ember.Service.extend(Ember.Evented, {
         sendreplies: false
       }).then(function() {
         reported.addObject(item);
-      }).catch(function() {
+      }).catch(function(error) {
         console.warn(error, error.stack);
       });
     }));
