@@ -53,21 +53,8 @@ export default Ember.Service.extend(Ember.Evented, {
       return known.filter(function(item) {return item.author !== '[deleted]';});
     }).then(function(known) {
       if (!known) {return;}
-      if (known.length === 1) {
-        var item = known[0];
-        if (!item.over_18 && !item.domain.match(/(imgur|reddit.com)/)) {
-          snoo('/api/submit').post({
-            sr: 'Stuff',
-            kind: 'link',
-            title: (item.title).slice(0, 299),
-            url: item.url + '#' + item.subreddit + '|' + item.author,
-            extension: 'json',
-            sendreplies: false
-          });
-        }
-        return;
-      }
       var mirror = known.get('firstObject.id');
+      if (!mirror) {return;}
       return anon('/duplicates/$article').listing({
         $article: mirror, limit: 100
       }, {listingIndex: 1}).then(function(dupes) {
@@ -125,6 +112,16 @@ export default Ember.Service.extend(Ember.Evented, {
     if (!unprocessed.length) {return;}
     this.get('processed').addObjects(unprocessed);
 
+    if (item.score > 10 || item.num_comments > 10) {
+      snoo('/api/submit').post({
+        sr: 'ModerationLog',
+        kind: 'link',
+        title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
+        url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
+        extension: 'json',
+        sendreplies: false
+      });
+    }
 
     return Ember.RSVP.all(unprocessed.map(function(item) {
       var flair = item.subreddit + '|' + item.author;
@@ -142,18 +139,7 @@ export default Ember.Service.extend(Ember.Evented, {
       }).then(function() {
         reported.addObject(item);
       }).catch(function() {
-        //console.warn(error, error.stack);
-      }).finally(function() {
-        if (item.score > 100 || item.num_comments > 50) {
-          return snoo('/api/submit').post({
-            sr: 'ModerationLog',
-            kind: 'link',
-            title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
-            url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
-            extension: 'json',
-            sendreplies: false
-          });
-        }
+        console.warn(error, error.stack);
       });
     }));
   }.observes('unprocessed.@each', 'shouldReport').on('init'),
@@ -165,12 +151,25 @@ export default Ember.Service.extend(Ember.Evented, {
     var reported = this.get('reportedComments');
     if (!unprocessed.length) {return;}
     this.get('processedComments').addObjects(unprocessed);
+
     return Ember.RSVP.all(unprocessed.map(function(item) {
       var flair = item.subreddit + '|' + item.author;
       var score = item.score;
       if (item.score > 0) {
         score = '+' + item.score;
       }
+
+      if (Math.abs(item.score) > 5) {
+        return snoo('/api/submit').post({
+          sr: 'RemovedComments',
+          kind: 'link',
+          title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 299),
+          url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
+          extension: 'json',
+          sendreplies: false
+        });
+      }
+
       return snoo('/api/submit').post({
         sr: 'modlog',
         kind: 'link',
@@ -180,19 +179,8 @@ export default Ember.Service.extend(Ember.Evented, {
         sendreplies: false
       }).then(function() {
         reported.addObject(item);
-      }).finally(function() {
-        if (Math.abs(item.score) > 25 || item.body.length > 1000) {
-          return snoo('/api/submit').post({
-            sr: 'RemovedComments',
-            kind: 'link',
-            title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 299),
-            url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
-            extension: 'json',
-            sendreplies: false
-          });
-        }
       }).catch(function() {
-        //console.warn(error, error.stack);
+        console.warn(error, error.stack);
       });
     }));
   }.observes('detectedComments.length').on('init'),
@@ -223,6 +211,18 @@ export default Ember.Service.extend(Ember.Evented, {
     var self = this;
     var linksubs = this.getMulti('link');
     var selfsubs = this.getMulti('self');
+    posts.forEach(function(item) {
+      if (!item.over_18 && !item.domain.match(/(imgur|reddit.com)/)) {
+        snoo('/api/submit').post({
+          sr: 'Stuff',
+          kind: 'link',
+          title: (item.title).slice(0, 299),
+          url: item.url + '#' + item.subreddit + '|' + item.author,
+          extension: 'json',
+          sendreplies: false
+        });
+      }
+    });
     this.getMulti('link').forEach(function(sub) {
       return posts.filterProperty('is_self', false).filter(function(item) {
         return !!item.url && self.getMulti(sub).contains(item.subreddit.toLowerCase());

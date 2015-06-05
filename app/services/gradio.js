@@ -108,7 +108,7 @@ export default Ember.Service.extend(Ember.Evented, {
     }).then(function(hash) {
       var ws = new WebSocket(hash.url);
       var listing = hash.listing.reverse();
-      listing.forEach(function(item) {
+      listing.slice(0, 10).forEach(function(item) {
         self.trigger('didReceiveSocketEvent', item);
       });
       ws.onopen = function() {
