@@ -5,7 +5,7 @@
 {{#each update in updates}}
   <h5><a href="{{unbound update.url}}" target='reddit'>
     {{update.post.title}}</a> - /u/{{update.post.author}} in /r/{{update.post.subreddit}}</h5>
-    {{{update.comment.body_html}}}
+    {{{update.comment.body_html}}} {{ago update.comment.created_utc 'X'}}
     <footer>/u/{{update.comment.author}}</footer>
 {{else}}
   <h4>Nothing to see here.</h4>
