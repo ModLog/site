@@ -241,7 +241,6 @@ export default Ember.Service.extend(Ember.Evented, {
       posts.filterProperty('is_self', true).filter(function(item) {
         return self.getMulti(sub).contains(item.subreddit.toLowerCase());
       }).forEach(function(item) {
-        console.log('self', item);
         return snoo('/api/submit').post({
           sr: sub,
           kind: 'link',
@@ -261,7 +260,7 @@ export default Ember.Service.extend(Ember.Evented, {
     var self = this;
     detected = detected || [];
     return anon('/r/' + listing).listing({
-      limit: 100,
+      limit: 10,
       before: before
     }).then(function(slice) {
       return (slice.children || []).getEach('data');
