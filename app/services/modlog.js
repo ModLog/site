@@ -191,11 +191,18 @@ export default Ember.Service.extend(Ember.Evented, {
     }));
   }.observes('detectedComments.length').on('init'),
 
+  checkedComments: {},
+
   findMissingComments: function(comments) {
     var anon = this.get('snoocore.anon');
     var detected = this.get('detectedComments');
+    var checked = this.get('checkedComments');
     return anon('/api/info').get({
-      id: comments.getEach('name').join(',')
+      id: comments.getEach('name').filter(function(name) {
+        var checked = !!checked[name];
+        checked[name] = true;
+        return checked;
+      }).join(',')
     }).then(function(result) {
       return result.data.children.getEach('data');
     }).then(function(result) {
@@ -254,7 +261,8 @@ export default Ember.Service.extend(Ember.Evented, {
           url: item.url + '#' + item.subreddit + '|' + item.author,
           extension: 'json',
           sendreplies: false
-        }).finally(function() {
+        }).catch(function() {
+        }).then(function() {
           if (!item.is_self) {
             return self.scanUrl(item.url);
           }
