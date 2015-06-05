@@ -193,6 +193,10 @@ export default Ember.Service.extend(Ember.Evented, {
 
   checkedComments: {},
 
+  setupCheckedComments: function() {
+    this.set('checkedComments', {});
+  }.on('init'),
+
   findMissingComments: function(comments) {
     var anon = this.get('snoocore.anon');
     var detected = this.get('detectedComments');
