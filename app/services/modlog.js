@@ -201,7 +201,7 @@ export default Ember.Service.extend(Ember.Evented, {
       id: comments.getEach('name').filter(function(name) {
         var checked = !!checked[name];
         checked[name] = true;
-        return checked;
+        return !checked;
       }).join(',')
     }).then(function(result) {
       return result.data.children.getEach('data');
@@ -216,6 +216,9 @@ export default Ember.Service.extend(Ember.Evented, {
         return !detected.findProperty('id', item.id);
       }));
       return removed;
+    }).catch(function(error) {
+      console.error('error', error);
+      return [];
     });
   },
 
