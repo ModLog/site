@@ -46,6 +46,7 @@ export default Ember.Service.extend(Ember.Evented, {
   scanUrl: function(url) {
     var anon = this.get('snoocore.anon');
     var snoo = this.get('snoocore.api');
+    var detected = this.get('detected');
     var self = this;
     return anon('/api/info').get({url: url}).then(function(result) {
       return (result.data.children || []).getEach('data');
@@ -54,7 +55,7 @@ export default Ember.Service.extend(Ember.Evented, {
     }).then(function(known) {
       if (!known) {return;}
       var mirror = known.findProperty('subreddit', 'Stuff') || known.findProperty('subreddit', 'POLITIC') || known.get('firstObject.id');
-      if (!mirror) {return;}
+      if (!mirror || !mirror.id) {return;}
       return anon('/duplicates/$article').listing({
         $article: mirror.id, limit: 100
       }, {listingIndex: 1}).then(function(dupes) {
