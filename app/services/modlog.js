@@ -203,9 +203,9 @@ export default Ember.Service.extend(Ember.Evented, {
     var checked = this.get('checkedComments');
     return anon('/api/info').get({
       id: comments.getEach('name').filter(function(name) {
-        var checked = !!checked[name];
+        var isChecked = !!checked[name];
         checked[name] = true;
-        return !checked;
+        return !isChecked;
       }).join(',')
     }).then(function(result) {
       return result.data.children.getEach('data');
