@@ -107,7 +107,10 @@ export default Ember.Service.extend(Ember.Evented, {
       })
     }).then(function(hash) {
       var ws = new WebSocket(hash.url);
-      self.trigger('didReceiveSocketEvent', hash.listing[0]);
+      var listing = hash.listing.reverse();
+      listing.forEach(function(item) {
+        self.trigger('didReceiveSocketEvent', item);
+      });
       ws.onopen = function() {
       };
       ws.onerror = function(e) {
@@ -127,6 +130,7 @@ export default Ember.Service.extend(Ember.Evented, {
   }.property('threadId'),
 
   didReceiveSocketEvent: function(data) {
+    try {
     var anon = this.get('snoocore.anon');
     var self = this;
     var lines = data.body.split('\n').map(function(line) {
@@ -151,6 +155,7 @@ export default Ember.Service.extend(Ember.Evented, {
       self.get('updates').insertAt(0, update);
       self.set('lastUpdate', update);
     });
+    } catch(e) {console.error(e);}
   }.on('didReceiveSocketEvent'),
 
   connectSocket: function() {

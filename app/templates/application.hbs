@@ -15,6 +15,7 @@
   </div>
 </div>
 <div id='maincontainer' class='container'>{{outlet}}</div>
+{{profs-gradio class='container'}}
 <footer id='footer' class='container'>
   <hr>
   <h5>
@@ -27,9 +28,6 @@
   <strong>NO CONTENT OR DATA IS HOSTED HERE!!!</strong>  This is just a client application written in javascript.
   <hr>
 </footer>
-{{#if gradio.lastUpdate.ytid}}
-  {{profs-gradio update=gradio.lastUpdate class='container'}}
-{{/if}}
 <div class='gradio-controls'>
   <div class='btn-group'>
     {{#link-to 'radio' class='btn btn-default'}}<span class='glyphicon glyphicon-music'></span> PRoFS <span class='label label-danger'>nsfw</span>{{/link-to}}
