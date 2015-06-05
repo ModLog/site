@@ -112,22 +112,22 @@ export default Ember.Service.extend(Ember.Evented, {
     if (!unprocessed.length) {return;}
     this.get('processed').addObjects(unprocessed);
 
-    if (item.score > 10 || item.num_comments > 10) {
-      snoo('/api/submit').post({
-        sr: 'ModerationLog',
-        kind: 'link',
-        title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
-        url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
-        extension: 'json',
-        sendreplies: false
-      });
-    }
 
     return Ember.RSVP.all(unprocessed.map(function(item) {
       var flair = item.subreddit + '|' + item.author;
       var score = item.score;
       if (item.score > 0) {
         score = '+' + item.score;
+      }
+      if (item.score > 10 || item.num_comments > 10) {
+        snoo('/api/submit').post({
+          sr: 'ModerationLog',
+          kind: 'link',
+          title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
+          url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
+          extension: 'json',
+          sendreplies: false
+        });
       }
       return snoo('/api/submit').post({
         sr: 'modlog',
@@ -138,7 +138,7 @@ export default Ember.Service.extend(Ember.Evented, {
         sendreplies: false
       }).then(function() {
         reported.addObject(item);
-      }).catch(function() {
+      }).catch(function(error) {
         console.warn(error, error.stack);
       });
     }));
@@ -227,7 +227,6 @@ export default Ember.Service.extend(Ember.Evented, {
       return posts.filterProperty('is_self', false).filter(function(item) {
         return !!item.url && self.getMulti(sub).contains(item.subreddit.toLowerCase());
       }).forEach(function(item) {
-        console.log('link', item);
         return snoo('/api/submit').post({
           sr: sub,
           kind: 'link',
