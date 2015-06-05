@@ -1,7 +1,7 @@
+{{input value=searchText placeholder='filter snews' class='form-control'}}
 {{ember-youtube ytid=gradio.lastUpdate.ytid class='pull-right'
   playing="ytPlaying" ended="ytEnded"
   autoplay=gradio.autoplay showControls=false}}
-{{input value=searchText placeholder='filter snews'}}
 {{#each update in updates}}
   <h5><a href="{{unbound update.url}}" target='reddit'>
     {{update.post.title}}</a> - /u/{{update.post.author}} in /r/{{update.post.subreddit}}</h5>

@@ -48,10 +48,26 @@ blockquote,
   text-shadow: 3px 3px white;
 }
 
-.jumbotron h1 a {
+.jumbotron a em {
+  text-decoration: none;
+  font-weight: bold;
+  color: salmon;
+  text-shadow: 3px 3px black;
+  font-style: normal;
+}
+
+.jumbotron h1 a.btn {
   background-color: salmon;
   opacity: 0.666;
   text-decoration: none;
+}
+
+.jumbotron h1 .label {
+  opacity: 0.666;
+}
+
+.jumbotron h1 .label a:hover {
+  background-color: salmon;
 }
 
 .gradio-controls:hover {
