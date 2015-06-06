@@ -11,15 +11,17 @@ function shuffle(o){
   for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
   return o;
 }
+var playlist = shuffle(["9IZpw6re478","6M4_Ommfvv0","gCiemjfnNZU","mXPeLctgvQI","9TlBTPITo1I","02njugU0H7E","BuJDaOVz2qY","_CH-9tVbKCM","nYSDC3cHoZs","7E-_J5WWkoc","yKOlBZJ7Izs","-Psfn6iOfS8","8Zisp85CCxc","V106RGMPcHQ","YR5ApYxkU-U","ulIOrQasR18","e0_JvuBpDB8","Yub7ZreDQMQ","eUA4mfDQB5k","JdxkVQy7QLM","tH2w6Oxx0kQ","9rJ6MoDAlo8","CXZtVoQ0gqs","6VF5P7qLaEQ","-iiAtLFkVps","WAGGEw4TcFY","B9856_xv8gc","MEJt_ujJWVA","ceTR67EjeyU","jvjDr8KKtsE","HSeImqbV30s","YkPhka2m_D0","5PsnxDQvQpw","J4kk2sxiMWU","7ADO4uuUJrA","a8B066ZeCPA","Mqyi0Iv2CdI","5Gc9pviBlJA","38k-qfy5Jk4","eBShN8qT4lk","8Bd1hqHrUPU","tBb4cjjj1gI","B7zLthh85P8","CZv_lvvIVoI","76LZPFUzLyw","N01vThrQ40Q","AL1qHYttFz8","rE3j_RHkqJc","5-mWq5B6sU0","lAD6Obi7Cag","65p9aYPdUX4","s6t6Yfu3HEI","MLhn9tc8Dvo","S0t4pyuEe7E","TE3a-8zEedE","X_5YJoMNmXc","Dsux5_qjYog","1rorneEGPso","UKZKl6ZRIGQ","i88yCbXunXM","etyH2OUxVuQ","7Pq-S557XQU","I_8rt1PSck8","bjasSGZd40s","qduwgQV051Q","4YmU5tMMkjI","nsTLUl2Ywus","d696t3yALAY"]);
 
 export default Ember.Service.extend(Ember.Evented, {
   snoocore: Ember.inject.service(),
   threadId: 'uocz16gmx2s7',
 
-  lastUpdate: {},
+  lastUpdate: {
+    ytid: playlist[0]
+  },
 
-  playlist: [],
-
+  playlist: playlist,
   autoplay: false,
 
   updates: function() {
@@ -39,7 +41,6 @@ export default Ember.Service.extend(Ember.Evented, {
     var anon = this.get('snoocore.anon');
     var self = this;
     var results = this.get('playlist');
-    results.removeObjects(results);
     return anon('/r/FORTradio/top.json').listing({
       limit: 100
     }).then(function(slice) {
@@ -95,9 +96,11 @@ export default Ember.Service.extend(Ember.Evented, {
   socket: function() {
     var id = this.get('threadId');
     var anon = this.get('snoocore.anon');
+    var api = this.get('snoocore.api');
+    if (!this.get('snoocore.isLoggedIn')) {api = anon;}
     var self = this;
     return Ember.RSVP.hash({
-      url: anon('/live/' + id + '/about.json').get().then(function(result) {
+      url: api('/live/' + id + '/about.json').get().then(function(result) {
         return result.data.websocket_url;
       }),
       listing: anon('/live/' + id + '.json').listing({
@@ -127,7 +130,7 @@ export default Ember.Service.extend(Ember.Evented, {
         });
       }
     });
-  }.property('threadId'),
+  }.property('threadId', 'snoocore.isLoggedIn'),
 
   didReceiveSocketEvent: function(data) {
     try {

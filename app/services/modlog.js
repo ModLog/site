@@ -231,44 +231,17 @@ export default Ember.Service.extend(Ember.Evented, {
     var self = this;
     var linksubs = this.getMulti('link');
     var selfsubs = this.getMulti('self');
-    this.getMulti('link').forEach(function(sub) {
-      return posts.filterProperty('is_self', false).filter(function(item) {
-        return !!item.url && self.getMulti(sub).contains(item.subreddit.toLowerCase());
-      }).forEach(function(item) {
-        return snoo('/api/submit').post({
-          sr: sub,
-          kind: 'link',
-          title: (item.title).slice(0, 299),
-          url: item.url,
-          extension: 'json',
-          sendreplies: false
-        });
-      });
-    });
-    this.getMulti('self').forEach(function(sub) {
-      posts.filterProperty('is_self', true).filter(function(item) {
-        return self.getMulti(sub).contains(item.subreddit.toLowerCase());
-      }).forEach(function(item) {
-        return snoo('/api/submit').post({
-          sr: sub,
-          kind: 'link',
-          title: item.title,
-          url: 'https://us.reddit.com' + item.permalink + '#' + item.subreddit + '|' + item.author,
-          extension: 'json',
-          sendreplies: false
-        });
-      });
-    });
     return Ember.RSVP.all(posts.map(function(item) {
       if (!item.over_18 && !item.domain.match(/(imgur|reddit.com)/)) {
         snoo('/api/submit').post({
           sr: 'Stuff',
           kind: 'link',
           title: (item.title).slice(0, 299),
-          url: item.url + '#' + item.subreddit + '|' + item.author,
+          url: item.url,
           extension: 'json',
           sendreplies: false
-        }).catch(function() {
+        }).catch(function(error) {
+          console.warn('error', error.stack || error);
         }).then(function() {
           if (!item.is_self) {
             return self.scanUrl(item.url);
@@ -276,7 +249,38 @@ export default Ember.Service.extend(Ember.Evented, {
         });
       }
       return Ember.RSVP.resolve();
-    }));
+    })).catch(function(e) {
+      console.error(e);
+    }).then(function() {
+      self.getMulti('link').forEach(function(sub) {
+        return posts.filterProperty('is_self', false).filter(function(item) {
+          return !!item.url && self.getMulti(sub).contains(item.subreddit.toLowerCase());
+        }).forEach(function(item) {
+          return snoo('/api/submit').post({
+            sr: sub,
+            kind: 'link',
+            title: (item.title).slice(0, 299),
+            url: item.url,
+            extension: 'json',
+            sendreplies: false
+          });
+        });
+      });
+      self.getMulti('self').forEach(function(sub) {
+        posts.filterProperty('is_self', true).filter(function(item) {
+          return self.getMulti(sub).contains(item.subreddit.toLowerCase());
+        }).forEach(function(item) {
+          return snoo('/api/submit').post({
+            sr: sub,
+            kind: 'link',
+            title: item.title,
+            url: 'https://us.reddit.com' + item.permalink + '#' + item.subreddit + '|' + item.author,
+            extension: 'json',
+            sendreplies: false
+          });
+        });
+      });
+    });
   },
 
   scanListing: function(listing) {
@@ -285,7 +289,7 @@ export default Ember.Service.extend(Ember.Evented, {
     var modlog = this;
     var self = this;
     return anon('/r/' + listing).listing({
-      limit: 100
+      limit: 10
     }).then(function(slice) {
       return (slice.children || []).getEach('data');
     }).then(function(posts) {

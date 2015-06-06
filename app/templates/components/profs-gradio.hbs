@@ -5,8 +5,12 @@
 {{#each update in updates}}
   <h5><a href="{{unbound update.url}}" target='reddit'>
     {{update.post.title}}</a> - /u/{{update.post.author}} in /r/{{update.post.subreddit}}</h5>
-    {{{update.comment.body_html}}} {{ago update.comment.created_utc 'X'}}
-    <footer>/u/{{update.comment.author}}</footer>
+    {{{update.comment.body_html}}}
+    <footer>/u/{{update.comment.author}} {{ago update.comment.created_utc 'X'}}</footer>
 {{else}}
+{{#if gradio.lastUpdate.comment}}
   <h4>Nothing to see here.</h4>
+{{else}}
+  <h4>{{link-to 'Please Wait | Loading PRoFS gRadio...' 'radio'}}</h4>
+{{/if}}
 {{/each}}

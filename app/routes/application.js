@@ -13,7 +13,9 @@ export default Ember.Route.extend({
     var route = this;
     return this.get('snoocore').checkLogin().then(function(isLoggedIn) {
       if (isLoggedIn) {
-        route.transitionTo('monitor');
+        route.transitionTo('monitor').then(function() {
+          route.transitionTo('radio');
+        });
       }
     });
   },
