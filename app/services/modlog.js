@@ -237,7 +237,7 @@ export default Ember.Service.extend(Ember.Evented, {
           sr: 'Stuff',
           kind: 'link',
           title: (item.title).slice(0, 299),
-          url: item.url,
+          url: item.url + '#' + item.subreddit + '|' + item.author,
           extension: 'json',
           sendreplies: false
         }).catch(function(error) {
