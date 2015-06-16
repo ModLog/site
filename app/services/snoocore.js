@@ -21,7 +21,7 @@ export default Ember.Service.extend({
     return new Snoocore({
       userAgent: this.get('userAgent'),
       decodeHtmlEntities: true,
-      throttle: 60000,
+      throttle: 10000,
       oauth: {
         type: 'implicit',
         mobile: false,
