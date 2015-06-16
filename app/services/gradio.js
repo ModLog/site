@@ -162,6 +162,6 @@ export default Ember.Service.extend(Ember.Evented, {
   }.on('didReceiveSocketEvent'),
 
   connectSocket: function() {
-    var socket = this.get('socket');
+    //var socket = this.get('socket');
   }.on('init')
 });
