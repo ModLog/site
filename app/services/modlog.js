@@ -74,7 +74,6 @@ export default Ember.Service.extend(Ember.Evented, {
       });
     }).then(function(removed) {
       if (!removed.length) {return [];}
-      console.warn('removed items', removed);
       removed.addObjects((removed || []).filter(function(post) {
         return !detected.findProperty('id', post.id);
       }));
@@ -125,20 +124,22 @@ export default Ember.Service.extend(Ember.Evented, {
       return snoo('/api/submit').post({
         sr: 'modlog',
         kind: 'link',
-        title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
+        title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 300),
         url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
         extension: 'json',
         sendreplies: false
       }).then(function() {
         reported.addObject(item);
       }).catch(function(error) {
-        console.warn(error, error.stack);
+        var err = (error.stack || error) + '';
+        if (err.match(/ALREADY_SUB/g)) {return;}
+        console.warn('error', error.stack || error);
       }).then(function() {
         if (item.score > 10 || item.num_comments > 10) {
           return snoo('/api/submit').post({
             sr: 'ModerationLog',
             kind: 'link',
-            title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 299),
+            title: (score + ' ' + item.num_comments + ' ' + item.title).slice(0, 300),
             url: 'https://rm.reddit.com' + item.permalink + '#' + flair,
             extension: 'json',
             sendreplies: false
@@ -171,7 +172,7 @@ export default Ember.Service.extend(Ember.Evented, {
       return snoo('/api/submit').post({
         sr: 'modlog',
         kind: 'link',
-        title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 299),
+        title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 300),
         url: 'https://rm.reddit.com' + item.profilelink + '#' + flair,
         extension: 'json',
         sendreplies: false
@@ -186,14 +187,16 @@ export default Ember.Service.extend(Ember.Evented, {
           return snoo('/api/submit').post({
             sr: 'RemovedComments',
             kind: 'link',
-            title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 299),
+            title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 300),
             url: 'https://rm.reddit.com' + item.profilelink + '#' + flair,
             extension: 'json',
             sendreplies: false
           });
         }
       }).catch(function(error) {
-        console.warn(error, error.stack);
+        var err = (error.stack || error) + '';
+        if (err.match(/ALREADY_SUB/g)) {return;}
+        console.warn('error', error.stack || error);
       });
     }));
   }.observes('detectedComments.length').on('init'),
@@ -243,7 +246,7 @@ export default Ember.Service.extend(Ember.Evented, {
         snoo('/api/submit').post({
           sr: 'Stuff',
           kind: 'link',
-          title: (item.title).slice(0, 299),
+          title: (item.title).slice(0, 300),
           url: item.url + '#' + item.subreddit + '|' + item.author,
           extension: 'json',
           sendreplies: false
@@ -269,7 +272,7 @@ export default Ember.Service.extend(Ember.Evented, {
           return snoo('/api/submit').post({
             sr: sub,
             kind: 'link',
-            title: (item.title).slice(0, 299),
+            title: (item.title).slice(0, 300),
             url: item.url,
             extension: 'json',
             sendreplies: false
@@ -287,7 +290,7 @@ export default Ember.Service.extend(Ember.Evented, {
           return snoo('/api/submit').post({
             sr: sub,
             kind: 'link',
-            title: (item.title).slice(0, 299),
+            title: (item.title).slice(0, 300),
             url: item.url,
             extension: 'json',
             sendreplies: false
