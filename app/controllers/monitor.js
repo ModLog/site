@@ -19,7 +19,7 @@ export default Ember.Controller.extend({
   startScanning: function() {
     if (!this.get('snoocore.isLoggedIn')) {return;}
     //this.get('modlog').scanLoop('/r/all/new');
-    //this.get('modlog').scanLoop('/user/PoliticBot/m/watch/new.json');
+    this.get('modlog').scanLoop('/user/PoliticBot/m/watch/new.json');
     this.get('modlog').scanLoop('/user/PoliticBot/m/watch/hot.json');
   }.observes('snoocore.isLoggedIn').on('init'),
 

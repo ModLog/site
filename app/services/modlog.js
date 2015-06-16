@@ -42,7 +42,6 @@ export default Ember.Service.extend(Ember.Evented, {
       return result;
     }).then(function(multis) {
       self.set('multis', multis);
-      console.log('multis', multis);
       return multis;
     });
   },
@@ -146,7 +145,9 @@ export default Ember.Service.extend(Ember.Evented, {
           });
         }
       }).catch(function(error) {
-        console.warn(error, error.stack);
+        var err = (error.stack || error) + '';
+        if (err.match(/ALREADY_SUB/g)) {return;}
+        console.warn('error', error.stack || error);
       });
     }));
   }.observes('unprocessed.@each', 'shouldReport').on('init'),
@@ -177,7 +178,9 @@ export default Ember.Service.extend(Ember.Evented, {
       }).then(function() {
         reported.addObject(item);
       }).catch(function(error) {
-        console.warn(error, error.stack);
+        var err = (error.stack || error) + '';
+        if (err.match(/ALREADY_SUB/g)) {return;}
+        console.warn('error', error.stack || error);
       }).then(function() {
         if (Math.abs(item.score) > 5) {
           return snoo('/api/submit').post({
@@ -270,6 +273,10 @@ export default Ember.Service.extend(Ember.Evented, {
             url: item.url,
             extension: 'json',
             sendreplies: false
+          }).catch(function(error) {
+            var err = (error.stack || error) + '';
+            if (err.match(/ALREADY_SUB/g)) {return;}
+            console.warn('error', error.stack || error);
           });
         });
       });
@@ -284,6 +291,10 @@ export default Ember.Service.extend(Ember.Evented, {
             url: item.url,
             extension: 'json',
             sendreplies: false
+          }).catch(function(error) {
+            var err = (error.stack || error) + '';
+            if (err.match(/ALREADY_SUB/g)) {return;}
+            console.warn('error', error.stack || error);
           });
         });
       });
@@ -298,6 +309,10 @@ export default Ember.Service.extend(Ember.Evented, {
             url: 'https://us.reddit.com' + item.permalink + '#' + item.subreddit + '|' + item.author,
             extension: 'json',
             sendreplies: false
+          }).catch(function(error) {
+            var err = (error.stack || error) + '';
+            if (err.match(/ALREADY_SUB/g)) {return;}
+            console.warn('error', error.stack || error);
           });
         });
       });
