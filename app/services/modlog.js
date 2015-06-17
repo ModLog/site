@@ -1,6 +1,7 @@
 import Ember from 'ember';
+import LiveSocketMixin from 'modlog/mixins/live-socket';
 
-export default Ember.Service.extend(Ember.Evented, {
+export default Ember.Service.extend(Ember.Evented, LiveSocketMixin, {
   snoocore: Ember.inject.service(),
 
   handleExpiredAuth: function() {
@@ -11,6 +12,17 @@ export default Ember.Service.extend(Ember.Evented, {
   }.observes('snoocore.api').on('init'),
 
   multis: {},
+
+  liveThreadId: function() {
+    if (this.get('snoocore.isLoggedIn')) {
+      return 'v009fwibxbpb';
+    }
+  }.property('snoocore.isLoggedIn'),
+
+  didReceiveSocketEvent: function(data) {
+    var post = JSON.parse(data.body.trim());
+    this.processPosts([post]);
+  }.on('didReceiveSocketEvent'),
 
   subs: function() {
     return ['snew', 'modlog', 'moderationlog', 'removedcomments', 'moderationlog']
