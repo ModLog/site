@@ -340,7 +340,7 @@ export default Ember.Service.extend(Ember.Evented, LiveSocketMixin, {
     var modlog = this;
     var self = this;
     return anon(listing).listing({
-      limit: 25
+      limit: 100
     }).then(function(slice) {
       return (slice.children || []).getEach('data');
     }).then(function(posts) {
@@ -348,7 +348,10 @@ export default Ember.Service.extend(Ember.Evented, LiveSocketMixin, {
     }).then(function(posts) {
       return posts.filterProperty('over_18', false);
     }).then(function(posts) {
-      self.processPosts(posts);
+      return self.processPosts(posts).then(function() {
+        return posts;
+      });
+    }).then(function(posts) {
       return posts.getEach('author').uniq().without('[deleted]');
     }).then(function(authors) {
       if (!authors.length) {return [];}
