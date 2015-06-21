@@ -184,7 +184,7 @@ export default Ember.Service.extend(Ember.Evented, LiveSocketMixin, {
       return snoo('/api/submit').post({
         sr: 'modlog',
         kind: 'link',
-        title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 300),
+        title: (score + ' Comment ' + item.id + ' on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 300),
         url: 'https://rm.reddit.com' + item.profilelink + '#' + flair,
         extension: 'json',
         sendreplies: false
@@ -199,7 +199,7 @@ export default Ember.Service.extend(Ember.Evented, LiveSocketMixin, {
           return snoo('/api/submit').post({
             sr: 'RemovedComments',
             kind: 'link',
-            title: (score + ' Comment ' + item.id + 'on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 300),
+            title: (score + ' Comment ' + item.id + ' on ' + item.link_id+':' + item.parent_id + ' ' + item.link_title).slice(0, 300),
             url: 'https://rm.reddit.com' + item.profilelink + '#' + flair,
             extension: 'json',
             sendreplies: false
