@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Service.extend({
   initFreedom: function() {
-    freedom('https://snew.github.io/snew-chat.json', {
+    freedom('https://snew.github.io/chat/snew-chat.json', {
       'debug': 'log'
     }).then(function(klass) {
       return new klass();
@@ -18,6 +18,7 @@ export default Ember.Service.extend({
 
   clientDidChange: function() {
     var client = this.get('client');
+    console.log('client changed', client);
     client.on('recv-buddylist', function(val) {
       this.set('users', Object.keys(val).map(function(id) {
         return val[id];

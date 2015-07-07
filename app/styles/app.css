@@ -98,3 +98,18 @@ blockquote,
   width: 100%;
   display: block;
 }
+
+#footer {
+  text-align: center;
+}
+
+.live-thread {
+  width: 100%;
+  height: 420px;
+}
+
+.clearfix {clear: both;}
+.comment-activity-chart {
+  width: 100%;
+  height: 400px;
+}
