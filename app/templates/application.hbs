@@ -6,11 +6,9 @@
     <div id='navbar' class='navbar-collapse collapse'>
       <ul class='nav navbar-nav'>
         {{#unless snoocore.isLoggedIn}}<li>
-          <a {{bind-attr href=model.loginUrl}}>
-            [pressiah button]
-          </a>
+          {{link-to '[run /r/ModLog bot]' 'monitor'}}
         </li>{{/unless}}
-        <li><a href="https://paosafe.space/" target="snew">paosafe.space</a></li>
+        <li><a href="http://openthesafe.space/" target="snew">openthesafe.space</a></li>
       </ul>
     </div>
   </div>
