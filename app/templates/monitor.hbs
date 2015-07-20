@@ -1,21 +1,23 @@
 <div class='text-center'>
-Now powering
+  {{#if snoocore.isLoggedIn}}
+    <h2>
+      {{link-to 'Thank you for participating!' 'radio'}}
+    </h2>
+  {{else}}
+    <h2 class='well monitor-button'>
+      <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-primary btn-lg'>
+        [log in to run bot]
+      </a>
+      <span class='label label-default'>
+        <a href="https://chrome.google.com/webstore/detail/modlog-lazy-pressiah-butt/ofkmlkdldhfkhbpcdfcefehljbahcieo?hl=en-US" target="chromeext">[chrome extension]</a>
+      </span>
+    </h2>
+    <p>This bot detects removed submissions and comments on reddit and posts them to /r/ModLog</p>
+    <p>It runs in your browser for one hour at a time at most, closing the tab stops it.</p>
+  {{/if}}
+
+  Now powering
   {{#each sub in modlog.subs}}
     <a href='https://us.reddit.com/r/{{unbound sub}}' target='reddit'>/r/{{sub}}</a>
   {{/each}}
-{{#if snoocore.isLoggedIn}}
-  <h2>
-    {{link-to 'Thank you for participating!' 'radio'}}
-  </h2>
-  <p>The bot will stop as soon as you close this tab, or in 1 hr</p>
-{{else}}
-  <h2 class='well monitor-button'>
-    <a {{bind-attr href=snoocore.loginUrl}} class='btn btn-primary btn-lg'>
-      [pressiah button]
-    </a>
-    <span class='label label-default'>
-      'allow' or <a href="https://chrome.google.com/webstore/detail/modlog-lazy-pressiah-butt/ofkmlkdldhfkhbpcdfcefehljbahcieo?hl=en-US" target="chromeext">[lazy pressiah]</a>
-    </span>
-  </h2>
-{{/if}}
 </div>
